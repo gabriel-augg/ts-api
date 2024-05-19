@@ -1,10 +1,12 @@
 import { Router } from "express";
+import multer from "multer";
 import { signUp } from "../controllers/authController";
-import { signUpValidation } from "../../middleware/userValidation";
-import { handleValidate } from "./handleValidate";
+import uploadConfig from "../../config/multer";
+
+const upload = multer(uploadConfig);
 
 const router = Router();
 
-router.post("/signup", signUpValidation(), handleValidate, signUp);
+router.post("/signup", upload.single("image"), signUp);
 
 export default router;
