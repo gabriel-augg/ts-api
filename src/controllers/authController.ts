@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { User } from '../models/User';
 import bcrypt from 'bcrypt';
-import { BadRequestError } from '../../helpers/api-erros';
+import { BadRequestError } from '../utils/api-errors';
 
 export async function signUp(req: Request, res: Response) {
     const { name, username, location, email, password, confirmPassword } =
