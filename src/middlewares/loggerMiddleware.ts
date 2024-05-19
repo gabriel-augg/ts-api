@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
-import Logger from "../config/logger";
+import Logger from "../utils/logger";
 
 const stream: StreamOptions = {
     write: (message) => Logger.http(message)
@@ -14,9 +14,9 @@ const skip = () => {
     return env !== "development"
 }
 
-const morganMiddleware = morgan(
+const loggerMiddleware = morgan(
     ":method :url :status :res[content-length] - :response-time ms", 
     {stream, skip}
 )
 
-export default morganMiddleware;
+export default loggerMiddleware;
