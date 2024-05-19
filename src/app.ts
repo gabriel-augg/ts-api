@@ -1,20 +1,25 @@
 import dotenv from "dotenv"
 import express from "express"
-import config from "config"
-import db from "../config/db"
-import Logger from "../config/logger"
+import db from "./config/db"
+import Logger from "./config/logger"
 
 import auth from "./api/routes/authRoutes"
+import path from "path"
+import { errorMiddleware } from "./middlewares/error"
 
 
 dotenv.config()
 
-const port = config.get<number>("port")
+const port = process.env.PORT || 3000
 const app = express()
 
 app.use(express.json())
 
-app.use("/api/v1/auth", auth)
+app.use("/auth", auth)
+
+app.use("/images", express.static(path.join(__dirname, "..", "uploads")))
+
+app.use(errorMiddleware)
 
 app.listen(port, async () => {
     await db()

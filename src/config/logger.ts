@@ -1,5 +1,8 @@
+import dotenv from "dotenv";
 import winston from "winston";
 import config from "config";
+
+dotenv.config()
 
 const levels = {
   error: 0,
@@ -10,7 +13,7 @@ const levels = {
 };
 
 const level = () => {
-  const env = config.get<string>("env") || "production";
+  const env = process.env.ENV || "production";
   const isDevelopment = env === "development";
   return isDevelopment ? "debug" : "warn";
 };
