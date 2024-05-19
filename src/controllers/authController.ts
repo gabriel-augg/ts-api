@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import { User } from '../models/User';
+import { RefreshToken } from '../models/RefreshToken';
 import bcrypt from 'bcrypt';
-import { BadRequestError } from '../utils/api-errors';
-import { sign } from 'jsonwebtoken'
+import { BadRequestError, UnauthorizedError } from '../utils/api-errors';
+import { generateRefreshToken } from '../utils/generateRefreshToken';
+import { generateToken } from '../utils/generateToken';
 
-const { JWT_SECRET } = process.env;
 
 export async function signUp(req: Request, res: Response) {
     const { name, username, location, email, password, confirmPassword } =
@@ -39,7 +40,7 @@ export async function signUp(req: Request, res: Response) {
         username,
         location,
         email,
-        avatar_url: requestImage?.filename || '',
+        avatar_url: requestImage.filename || null,
         password: hashedPassword,
     });
 
@@ -67,15 +68,30 @@ export async function signIn(req: Request, res: Response) {
         throw new BadRequestError('Email ou senha incorretos!');
     }
 
-    const token = sign(
-        { username: user.username, avatar_url: user.avatar_url },
-        JWT_SECRET!,
-        {
-            subject: user._id.toString(),
-            expiresIn: '1d',
-        },
-    );
+    const token = generateToken(user._id.toString(), user.username, user.avatar_url!.toString())
+
+    const refreshToken = await generateRefreshToken(user._id.toString());
+
+    res.status(200).json({ token, refreshToken });
+
+}
+
+export async function refreshToken(req: Request, res: Response) {
+    const { refresh_token } = req.body;
+
+    const refreshToken = await RefreshToken.findOne({ _id: refresh_token });
+
+    if (!refreshToken) {
+        throw new UnauthorizedError('Token de atualização inválido!');
+    }
+
+    const user = await User.findOne({ _id: refreshToken.user_id });
+
+    if (!user) {
+        throw new UnauthorizedError('Token de atualização inválido!');
+    }
+
+    const token = generateToken(user._id.toString(), user.username, user.avatar_url!.toString());
 
     res.status(200).json({ token });
-
 }

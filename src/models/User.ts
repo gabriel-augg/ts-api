@@ -8,6 +8,7 @@ const userSchema = new Schema(
         location: { type: String },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
+        refreshToken: { type: Schema.Types.ObjectId, ref: 'RefreshToken' },
     },
     { timestamps: true },
 );
