@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import { BadRequestError, UnauthorizedError } from '../utils/api-errors';
 import { generateRefreshToken } from '../utils/generateRefreshToken';
 import { generateToken } from '../utils/generateToken';
+import dayjs from 'dayjs';
 
 
 export async function signUp(req: Request, res: Response) {
@@ -68,6 +69,8 @@ export async function signIn(req: Request, res: Response) {
         throw new BadRequestError('Email ou senha incorretos!');
     }
 
+    await RefreshToken.deleteMany({ user_id: user._id });
+
     const token = generateToken(user._id.toString(), user.username, user.avatar_url!.toString())
 
     const refreshToken = await generateRefreshToken(user._id.toString());
@@ -92,6 +95,17 @@ export async function refreshToken(req: Request, res: Response) {
     }
 
     const token = generateToken(user._id.toString(), user.username, user.avatar_url!.toString());
+
+    const refreshTokenExpired = dayjs().isAfter(dayjs.unix(refreshToken.expires_at));
+
+    if (refreshTokenExpired) {
+        await RefreshToken.deleteMany({ user_id: refreshToken.user_id });
+
+        const newRefreshToken = await generateRefreshToken(refreshToken.user_id.toString());
+
+        res.status(200).json({ token, refreshToken: newRefreshToken});
+    }
+
 
     res.status(200).json({ token });
 }
