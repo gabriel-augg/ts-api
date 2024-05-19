@@ -2,6 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import { signUp } from "../controllers/authController";
 import uploadConfig from "../../config/multer";
+import { ApiError } from "../../helpers/api-erros";
 
 const upload = multer(uploadConfig);
 
