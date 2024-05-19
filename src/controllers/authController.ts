@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { User } from '../models/User';
 import bcrypt from 'bcrypt';
 import { BadRequestError } from '../utils/api-errors';
+import { sign } from 'jsonwebtoken'
+
+const { JWT_SECRET } = process.env;
 
 export async function signUp(req: Request, res: Response) {
     const { name, username, location, email, password, confirmPassword } =
@@ -42,5 +45,37 @@ export async function signUp(req: Request, res: Response) {
 
     await user.save();
 
-    res.status(201).json(user);
+    res.status(204).json({});
+}
+
+export async function signIn(req: Request, res: Response) {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        throw new BadRequestError('Campos obrigatórios não preenchidos!');
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw new BadRequestError('Email ou senha incorretos!');
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+        throw new BadRequestError('Email ou senha incorretos!');
+    }
+
+    const token = sign(
+        { username: user.username, avatar_url: user.avatar_url },
+        JWT_SECRET!,
+        {
+            subject: user._id.toString(),
+            expiresIn: '1d',
+        },
+    );
+
+    res.status(200).json({ token });
+
 }
