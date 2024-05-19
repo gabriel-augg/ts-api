@@ -8,5 +8,6 @@ export const errorMiddleware = (
     next: NextFunction,
 ) => {
     const statusCode = err.statusCode ?? 500;
-    res.status(statusCode).json("caiu no error middleware");
+    const message = err.message ? err.message : "Erro interno do servidor" ;
+    res.status(statusCode).json({ message });
 };
