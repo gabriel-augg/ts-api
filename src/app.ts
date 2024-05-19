@@ -7,6 +7,7 @@ import Logger from "./config/logger"
 import auth from "./api/routes/authRoutes"
 import path from "path"
 import { errorMiddleware } from "./middlewares/error"
+import morganMiddleware from "./middlewares/morganMiddleware"
 
 
 dotenv.config()
@@ -15,9 +16,9 @@ const port = process.env.PORT || 3000
 const app = express()
 
 app.use(express.json())
+app.use(morganMiddleware)
 
 app.use("/auth", auth)
-
 app.use("/images", express.static(path.join(__dirname, "..", "uploads")))
 
 app.use(errorMiddleware)
