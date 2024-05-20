@@ -12,6 +12,7 @@ export async function signUp(req: Request, res: Response) {
     const { name, username, location, email, password, confirmPassword } =
         req.body;
     const requestImage = req.file as Express.Multer.File;
+    const avatar_url = requestImage ? requestImage.filename : null;
 
     if (!name || !username || !email || !password || !confirmPassword) {
         throw new BadRequestError('Campos obrigatórios não preenchidos!');
@@ -41,7 +42,7 @@ export async function signUp(req: Request, res: Response) {
         username,
         location,
         email,
-        avatar_url: requestImage.filename || null,
+        avatar_url,
         password: hashedPassword,
     });
 

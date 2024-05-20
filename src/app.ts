@@ -26,3 +26,5 @@ app.listen(port, async () => {
     await db();
     Logger.info(`Aplicação está funcionando na porta: ${port}`);
 });
+
+export { app }
