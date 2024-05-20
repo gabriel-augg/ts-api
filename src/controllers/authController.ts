@@ -72,7 +72,7 @@ export async function signIn(req: Request, res: Response) {
 
     await RefreshToken.deleteMany({ user_id: user._id });
 
-    const token = generateToken(user._id.toString(), user.username, user.avatar_url!.toString())
+    const token = generateToken(user._id.toString())
 
     const refreshToken = await generateRefreshToken(user._id.toString());
 
@@ -89,13 +89,7 @@ export async function refreshToken(req: Request, res: Response) {
         throw new UnauthorizedError('Token de atualização inválido!');
     }
 
-    const user = await User.findOne({ _id: refreshToken.user_id });
-
-    if (!user) {
-        throw new UnauthorizedError('Token de atualização inválido!');
-    }
-
-    const token = generateToken(user._id.toString(), user.username, user.avatar_url!.toString());
+    const token = generateToken(refreshToken.user_id.toString());
 
     const refreshTokenExpired = dayjs().isAfter(dayjs.unix(refreshToken.expires_at));
 

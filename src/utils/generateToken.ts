@@ -5,12 +5,8 @@ dotenv.config();
 
 const secret = process.env.JWT_SECRET!;
 
-export const generateToken = (
-    id: string,
-    username: string,
-    avatar_url: string | null,
-) => {
-    const token = sign({ username, avatar_url }, secret, {
+export const generateToken = (id: string) => {
+    const token = sign({}, secret, {
         subject: id,
         expiresIn: '20s',
     });

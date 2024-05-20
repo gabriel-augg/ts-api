@@ -5,6 +5,7 @@ import db from './db/conn';
 import Logger from './utils/logger';
 
 import authRoutes from './routes/authRoutes';
+import userRoutes from './routes/userRoutes';
 import path from 'path';
 import { errorMiddleware } from './middlewares/errorMiddleware';
 import loggerMiddleware from './middlewares/loggerMiddleware';
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(loggerMiddleware);
 
 app.use('/auth', authRoutes);
+app.use('/users', userRoutes)
 app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));
 
 app.use(errorMiddleware);
