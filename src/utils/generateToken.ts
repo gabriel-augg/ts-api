@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const secret = process.env.JWT_SECRET!;
+const secret = process.env.JWT_SECRET ?? '';
 
 export const generateToken = (id: string) => {
     const token = sign({}, secret, {

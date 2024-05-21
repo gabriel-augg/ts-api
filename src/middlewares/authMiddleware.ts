@@ -5,14 +5,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const secret = process.env.JWT_SECRET!;
+const secret: string = process.env.JWT_SECRET ?? "";
 
 export const authMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const authToken = req.headers.authorization;
+  const authToken = req.headers.authorization; 
 
   if (!authToken) {
     throw new UnauthorizedError("Token não informado!");
@@ -21,9 +21,8 @@ export const authMiddleware = (
   const [, token] = authToken.split(" ");
 
   try {
-    const decoded = verify(token, secret);
-    console.log(decoded);
-    req.body._id = decoded.sub;
+    verify(token, secret);
+    req.body.token = token;
     next();
   } catch (error) {
     throw new UnauthorizedError("Token inválido!");

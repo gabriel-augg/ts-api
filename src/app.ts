@@ -4,8 +4,8 @@ import express from 'express';
 import db from './db/conn';
 import Logger from './utils/logger';
 
-import authRoutes from './routes/authRoutes';
-import userRoutes from './routes/userRoutes';
+import authRoutes from './routes/auth.route';
+import userRoutes from './routes/user.route';
 import path from 'path';
 import { errorMiddleware } from './middlewares/errorMiddleware';
 import loggerMiddleware from './middlewares/loggerMiddleware';

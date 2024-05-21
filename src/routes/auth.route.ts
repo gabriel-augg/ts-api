@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { signIn, signUp, refreshToken } from '../controllers/authController';
+import { signIn, signUp, refreshToken } from '../controllers/auth.controller';
 import uploadConfig from '../utils/upload';
 
 const upload = multer(uploadConfig);
